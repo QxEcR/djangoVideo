@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload</title>
+</head>
+
+<body>
+  {% if upload %}
+  <form id="video_form" enctype="multipart/form-data" method="post">{% csrf_token %}
+
+    <div>
+      title :
+      {{form.title}}
+    </div>
+    <div>
+      thumbnail :
+      {{form.thumbnail}}
+    </div>
+    <div>
+      video :
+      {{form.video}}
+    </div>
+
+    <div>
+      Description :
+      {{ form.description }}
+    </div>
+
+
+
+
+    <div>
+      <button type="submit">رفع</button>
+    </div>
+  </form>
+
+  {% endif %}
+</body>
+
+</html>
+<!-- 
+{% block title %}
+رفع فيديو جديد
+{% endblock %}
+{% block head %}
+<style media="screen">
+  .none {
+    display: none;
+  }
+
+  #title-input {
+    width: 200%;
+  }
+</style>
+{% endblock %}
+{% block content %}
+{% if upload %}
+<form id="video_form" enctype="multipart/form-data" method="post">{% csrf_token %}
+  <div class="row mb-3">
+    <span class="col-5 ">
+      العنوان :
+    </span>
+    <span class="col-1">{{form.title}}</span>
+    <span class="col-6"></span>
+  </div>
+  <div class="row mb-3">
+    <span class="col-5 ">
+      صورة الفيديو
+    </span>
+    <span class="col-1">{{form.thumbnail}}</span>
+    <span class="col-6"></span>
+  </div>
+  <div class="row mb-3">
+    <span class="col-5 ">
+      الفيديو :
+    </span>
+    <span class="col-1">{{form.video}}</span>
+    <span class="col-6"></span>
+  </div>
+
+  <div class="col-5">
+    <label>Description : </label>
+  </div>
+  <div class="row">
+    <span class="col-xl-3"></span>
+    <span class="col-xl-6 col-s-12 text-center">
+      {{ form.media }}{{ form.description }}
+    </span>
+    <span class="col-xl-3"></span>
+  </div>
+
+  <div class="d-none">
+    {{form.tags}}
+  </div>
+
+  <div class="col-12 mt-3 text-center text-danger">
+    {% if form.errors %}
+    <p>يوجد مشاكل في بعض المعلومات المدخلة</p>
+    <p>الرجاء التأكد من أن العنوان غير متكرر</p>
+    <p>الرجاء التأكد من صيغ الملفات المرفقة</p>
+    {% endif %}
+  </div>
+  <div class="col-12 d-flex justify-content-center flex-column align-items-center mt-4 mb-4">
+    إضافة وسم
+    <input type="text" name="tagInput" list="tagslist" id="tagInput" maxlength="20">
+    <datalist id="tagslist">
+      {% for tag in tagslist %}
+        <option value="{{tag.name}}">
+      {% endfor %}
+    </datalist>
+    <div class="d-flex justify-content-center flex-column align-items-center mb-2 mt-2" id="tags">
+
+    </div>
+    <button type="button" id="tagBtn" class="btn btn-success mt-2">إضافة</button>
+  </div>
+
+  <div class="row">
+    <span class="col-12 mt-3 text-center">
+      <button class="btn btn-success" type="submit">رفع</button></span>
+  </div>
+
+</form>
+
+<div class="col-12 mt-3 text-center text-info" onclick="text()">
+  <span class="text-danger">
+    الرجاء عدم اغلاق النافذة بعد الرفع <br>
+  </span>
+  عند اكتمال الرفع سيتم تحويلك الى صفحة الفيديو
+</div>
+{% elif update %}
+<form id="video_form" enctype="multipart/form-data" method="post">{% csrf_token %}
+  <div class="row mb-3">
+    <span class="col-5 ">
+      العنوان :
+    </span>
+    <span class="col-1">{{form.title}}</span>
+    <span class="col-6"></span>
+  </div>
+
+  <div class="col-5">
+    <label>Description : </label>
+  </div>
+  <div class="row">
+    <span class="col-xl-3"></span>
+    <span class="col-xl-6 col-s-12 text-center">
+      {{ form.description }}{{form.media}}
+    </span>
+    <span class="col-xl-3"></span>
+  </div>
+
+  <div class="col-12 mt-3 text-center text-danger">
+    {% if form.errors %}
+    <p>يوجد مشاكل في بعض المعلومات المدخلة</p>
+    <p>الرجاء التأكد من أن العنوان غير متكرر</p>
+    <p>الرجاء التأكد من صيغ الملفات المرفقة</p>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <span class="col-12 mt-3 text-center">
+      <button class="btn btn-success" type="submit">رفع</button></span>
+  </div>
+
+</form>
+{% endif %}
+
+
+{% endblock %} -->

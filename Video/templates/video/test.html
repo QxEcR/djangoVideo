@@ -1,0 +1,247 @@
+
+{% block title %}
+{{video.title}}
+{% endblock %}
+{% block head %}
+
+
+<link rel="stylesheet" href="https://cdn.plyr.io/3.6.7/plyr.css" />
+<style media="screen">
+  .none {
+    display: none;
+  }
+
+  #addreplaybtn {
+    color: blue
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+
+  input[type=text],
+  select {
+    width: 70%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="col-12 d-flex justify-content-center">
+  <h1>{{ video.title }}</h1>
+</div>
+
+<div class="col-12 d-flex justify-content-center">
+  <video id="player" playsinline width="500px" height="450px" preload="auto"
+    add-view-url="{% url 'video:add_view' video.id %}" controls data-poster="{{video.thumbnail.url}}">
+    <source src="{{video.video.url}}" type="video/mp4" />
+    <source src="{{video.video.url}}" type="video/webm" />
+  </video>
+</div>
+
+
+
+<br><br>
+<div class="col-12 d-flex justify-content-center">
+  Views : {{video.views}}
+</div>
+<div class="col-12 d-flex justify-content-center">
+  {% if request.user.is_authenticated %}
+  <form id="rate_form" method="POST">{% csrf_token %}
+    <p>
+      <span class="mr-2">
+        <button class=" btn" type="submit" post-url="{% url 'video:new_rate' video.id %}"
+          get-url="{% url 'video:get_rate_ajax' video.id %}" id="like" name="like"><img width="40"
+            src="{% static 'siteimage/like.png' %}" alt="Add like"></button><span id="herelikes">{{likes}}</span>
+      </span>
+      <span class="ml-2">
+        <button class=" btn" type="submit" post-url="{% url 'video:new_rate' video.id %}"
+          get-url="{% url 'video:get_rate_ajax' video.id %}" id="dislike" name="dislike"><img width="40"
+            src="{% static 'siteimage/dislike.png' %}" alt="Add dislike"></button><span
+          id="heredislikes">{{dislikes}}</span>
+      </span>
+    </p>
+  </form>
+  {% else %}
+
+  <div class="mt-2 mb-2">
+    <h6 class="text-danger"><a href="{% url 'User:login' %}">يرجى تسجيل الدخول لتقييم الفيديو</a></h6>
+  </div>
+
+  {% endif %}
+</div>
+<div id="video_info" class="none">
+  <div class="col-12 d-flex justify-content-center">
+    {% if video.username.profile_image %}
+    <h4 class="card-title">{{video.username}}<img class="m-2 rounded" src="{{video.username.profile_image.url}}"
+        alt="Logo" style="width:120px;"></h4>
+    {% else %}
+    <h4 class="card-title">{{video.username}}<img class="m-2 rounded" src="{% static 'siteimage/defaultuser.png' %}"
+        alt="Logo" style="width:120px;"></h4>
+    {% endif %}
+  </div>
+  {% if video.description %}
+  <div class="col-12 d-flex justify-content-center flex-column align-items-center">
+    <p>{{ video.description|safe }}</p>
+  </div>
+  {% endif %}
+  <div class="col-12 d-flex justify-content-center align-items-center">
+    {% for tag in tags %}
+    <a href="{% url 'tag:video_tag_detail' tag.tag.name %}">
+      <p class="p-2 m-2 bg-info text-white" style="border-radius: 10%;">
+        {{tag.tag.name}}
+      </p>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="col-12 d-flex justify-content-center ">
+    {% if request.user == video.username %}
+    <a href="{% url 'video:video_delete' video.url %}">حذف الفيديو</a>
+    {% endif %}
+  </div>
+  <div class="col-12 d-flex justify-content-center">
+    {% if request.user == video.username %}
+    <a href="{% url 'video:update' video.url %}">تعديل الفيديو</a>
+    {% endif %}
+  </div>
+</div>
+<div id="show_video_data" class="text-primary col-12 d-flex justify-content-center pointer">إظهار المزيد</div>
+
+
+
+
+<div class="row mt-4">
+  {% for video in suggest %}
+  <div class="col-lg-3 col-md-12 d-flex justify-content-center mb-2">
+    <div class="card" style="width: 25rem;">
+      <a class="a" href="{% url 'video:watch' video.url %}"><img class="card-img-top" src="{{video.thumbnail.url}}"
+          alt="Card image cap"></a>
+      <div class="card-body">
+        <a class="a" href="{% url 'video:watch' video.url %}">
+          <h5 class="card-title">{{video.title}}</h5>
+        </a>
+        <p class="card-text">by: {{video.username}} | views : {{video.views}}</p>
+
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+<br>
+<hr>
+{% if request.user.is_authenticated %}
+<form id="comment_form" class="text-center" method="POST">{% csrf_token %}
+  <h4>إضافة تعليق</h4>
+  <input type="text" id="comment_input" name="comment"><br>
+
+  <button id="comment_btn" url="{% url 'video:new_comment' video.id %}" name="newcomment" class="btn btn-info"
+    type="submit">نشر</button>
+
+</form>
+{% else %}
+<h6 class="text-danger d-flex justify-content-center"><a href="{% url 'User:login' %}">يرجى تسجيل الدخول لنشر تعليق</a>
+</h6>
+{% endif %}
+<hr>
+<h5 class="d-flex justify-content-center">{{comment_count}} Comments</h5>
+<div class="infinite-container">
+  {% for comment in comments %}
+  <div class="row infinite-item">
+    <div class="col-12 d-flex justify-content-center">
+      <div class="card mb-2 w-75">
+        <div class="card-body float-left">
+          {% if comment.username.profile_image %}
+          <h4 class="card-title">{{comment.username}}<img class="m-2 rounded"
+              src="{{comment.username.profile_image.url}}" alt="Logo" style="width:120px;"></h4>
+          {% else %}
+          <h4 class="card-title ">{{comment.username}}<img class="m-2 rounded"
+              src="{% static 'siteimage/defaultuser.png' %}" alt="Logo" style="width:120px;"></h4>
+          {% endif %}
+          <h5 class="card-title">تاريخ : {{comment.date}}</h5>
+          <hr>
+          {% if request.user == comment.username %}
+          <span><button class="text-danger comment btn" url="{% url 'video:comment_delete' comment.id %}">حذف
+              التعليق</button></span><br>
+          {% endif %}
+          <button class="addreplay btn" url="{% url 'video:add_replay' video.id comment.id %}">إضافة رد</button>
+          <hr>
+          <p class="userimg card-text  ">
+            {{comment.comment|safe}}
+
+          </p>
+
+          {% for replay in replays %}
+
+          {% if replay.comment == comment %}
+          <hr>
+          <div>
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <div class="card mb-2 w-50 border-top-0 border-left-0 border-right-0 border-bottom-0">
+                  <div class="card-body">
+                    {% if replay.username.profile_image %}
+                    <h4 class="card-title">{{replay.username}}<img class="m-2 rounded"
+                        src="{{replay.username.profile_image.url}}" alt="Logo" style="width:55px;"></h4>
+                    {% else %}
+                    <h4 class="card-title">{{replay.username}}<img class="m-2 rounded"
+                        src="{% static 'siteimage/defaultuser.png' %}" alt="Logo" style="width:55px;"></h4>
+                    {% endif %}
+                    <h5 class="card-title">تاريخ : {{replay.date}}</h5>
+                    {% if request.user == replay.username %}
+
+                    <span><button class="mb-3 text-danger replay btn"
+                        url="{% url 'video:replay_delete' replay.id %}">حذف
+                        الرد</button></span><br>
+                    {% endif %}
+
+                    <p class="userimg card-text">
+
+                      {{replay.replay|safe}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% endfor %}
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="row">
+  <div class="col-12">
+    {% if comments.has_next %}
+    <a class="infinite-more-link" href="?page={{ comments.next_page_number }}">next</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+<!-- <script src="https://vjs.zencdn.net/7.8.4/video.js"></script> -->
+<script src="https://cdn.plyr.io/3.6.7/plyr.js"></script>
+<script>
+  const player = new Plyr('#player', {
+    "controls": ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+  });
+  var csrf = "{{ csrf_token }}"
+</script>
+<script src="{% static 'js/watch_video.js' %}"></script>
+<script src="{% static 'js/waypoint/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/waypoint/infinite.min.js' %}"></script>
+<script src="{% static 'js/waypoint/waymain.js' %}"></script>
+
+{% endblock %}

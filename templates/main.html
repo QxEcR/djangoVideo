@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video</title>
+</head>
+
+<body>
+    <a href="{% url 'video:upload' %}">
+        <h2>Upload a new video</h2>
+    </a>
+
+    {% for video in videos %}
+    <div>
+        <a href="{% url 'video:watch' video.url %}">
+            {{video.title}}
+            <img src="{{video.thumbnail.url}}" alt="thumbnail" width="150" height="150">
+        </a>
+    </div>
+    <hr>
+    {% endfor %}
+</body>
+
+</html>

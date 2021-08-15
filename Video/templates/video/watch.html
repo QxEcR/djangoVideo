@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{video.title}}</title>
+</head>
+
+<body>
+  <div>
+    <h1>{{ video.title }}</h1>
+  </div>
+
+  <video width="500px" height="450px" preload="auto" controls data-poster="{{video.thumbnail.url}}">
+    <source src="{{video.video.url}}" type="video/mp4" />
+    <source src="{{video.video.url}}" type="video/webm" />
+  </video>
+
+  <div>
+    <a href="{% url 'video:video_delete' video.url %}">DELETE VIDEO</a>
+  </form>
+
+  {% if video.description %}
+<div>
+  <p>{{ video.description|safe }}</p>
+</div>
+{% endif %}
+
+<form method="POST">{% csrf_token %}
+  <h4>new comment</h4>
+  <input type="text" name="comment"><br>
+
+  <button type="submit">post</button>
+</form>
+<br><br><br><br><hr>
+<div>
+  {% for comment in comments %}
+    {{forloop.counter}} | {{comment.comment}}
+    <hr>
+  {% endfor %}
+</div>
+</body>
+</html>
